@@ -45,11 +45,7 @@ def retrievePropertyValue(property: str, row: dict) -> str:
             value = iso_str
 
     if row["properties"][property]["type"] == "select":
-        value = row["properties"][property]["select"]["name"]
-
-    if row["properties"][property]["type"] == "formula":
-        eq_type = row["properties"][property]["formula"]["type"]
-        value = row["properties"][property]["formula"][eq_type]
+        value = row["properties"][property]["select"]
 
     return str(value)
 

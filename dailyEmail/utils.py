@@ -38,7 +38,7 @@ def retrievePropertyValue(property: str, row: dict) -> str:
         iso_str = row["properties"][property]["date"]
         
     if row["properties"][property]["type"] == "select":
-        value = row["properties"][property]["select"]["id"]["name"]["color"]
+        value = row["properties"][property]["select"]["id"]["name"]
 
     return str(value)
 

@@ -6,8 +6,16 @@ from send_email import send_email
 import html_email as html
 import datetime
 from datetime import timezone
+
+#Variables
+token = "secret_3NgfVbobBT1DXSXZvr0E87ZS4PDRDTNDodwxK7OuOI8"
+database_Id = "5ce18cbb7a354ebfa430aec3f574067a"
+gmail_password = "IwkPR1yr"
+gmail_from = "ian@primedesign.co"
+gmail_to = "ian@primedesign.co"
+
 # Notion api config
-password = f"Bearer {SECRETS['notion_test_token']}"
+password = "Bearer " + token 
 headers = {
     "Authorization": password,
     "Notion-version": "2022-06-28"
@@ -17,41 +25,12 @@ tomorrow = (
     datetime.datetime.now(timezone.utc) +
     datetime.timedelta(days=1)
 ).astimezone().isoformat()
-query = {
-    "filter": {
-        "and": [
-            {
-                "property": "Done",
-                "checkbox": {
-                    "equals": False
-                }
-            },
-            {
-                "property": "Due",
-                "date": {
-                    "before": tomorrow
-                }
-            }
-        ]
-    },
-    "sorts": [
-        {
-            "property": "Due",
-            "direction": "ascending"
-        },
-        {
-            "property": "State",
-            "direction": "descending"
-        }
-    ]
-}
 
 # Notion api database block http request
 database = retrieveNotionDatabase.retrieveDatabase(
-    databaseId=SECRETS['database_id'],
+    databaseId=database_Id,
     headers=headers,
     save_to_json=False,
-    query=query
 )
 
 # Print retrieve database data
@@ -62,8 +41,8 @@ database_list = utils.decodeDatabase(database)
 dbProperties = utils.databaseProperties(database_list)
 
 # Filter columns of the database
-dbProperties = ['State', 'Task', 'Api-projects', 'Due',
-                'Kanban - State', 'Priority', 'Type']
+dbProperties = ['Checkbox', 'Title', 'Text', 'Number',
+                'Date', 'Select']
 # Data to html table
 title = "\n".join(html.html_table_column(dbProperties))
 rows = "\n".join(html.html_table_row(
@@ -86,7 +65,7 @@ html_msg = html.construct_html_msg(
 # Send email with html msg
 send_email(
     html_msg,
-    SECRETS['email_from'],
-    SECRETS['email_to'],
-    SECRETS['gmail_password']
+    email_from,
+    email_to,
+    gmail_password
 )

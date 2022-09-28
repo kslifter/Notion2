@@ -9,9 +9,9 @@ from datetime import timezone
 #Variables
 token = "secret_3NgfVbobBT1DXSXZvr0E87ZS4PDRDTNDodwxK7OuOI8"
 database_Id = "5ce18cbb7a354ebfa430aec3f574067a"
-gmail_password = "IwkPR1yr"
-gmail_from = "ian@primedesign.co"
-gmail_to = "ian@primedesign.co"
+email_password = "IwkPR1yr"
+email_from = "ian@primedesign.co"
+email_to = "ian@primedesign.co"
 
 # Notion api config
 password = "Bearer " + token 
@@ -66,5 +66,5 @@ send_email(
     html_msg,
     email_from,
     email_to,
-    gmail_password
+    email_password
 )

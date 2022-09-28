@@ -32,9 +32,9 @@ def construct_html_msg(table, style, quote):
     </style>
     </head>
     <body>
-        <h1>Tareas del dia ✅</h1>
+        <h1>Tasks of the Day ✅</h1>
         {table}
-        <h1>Frase del dia 🧠</h1>
+        <h1>Quote of the Day 🧠</h1>
         {quote}
     </body>
 </html>

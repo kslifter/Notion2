@@ -27,10 +27,6 @@ jobs:
             python -m pip install --upgrade pip
             pip install requests python-dateutil
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Decode secrets
-        env: 
-          TOKENS_PY_FILE: ${{ secrets.TOKENS_PY_FILE }}
-        run: echo $TOKENS_PY_FILE | base64 -d > dailyEmail/tokens.py
   
       - name: Run todays-schedule-email.py script
         run: python dailyEmail/todays-schedule-email.py

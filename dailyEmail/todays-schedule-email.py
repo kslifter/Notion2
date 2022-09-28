@@ -1,7 +1,6 @@
 
 from service import retrieveStoicQuote, retrieveNotionDatabase
 import utils
-from tokens import SECRETS
 from send_email import send_email
 import html_email as html
 import datetime

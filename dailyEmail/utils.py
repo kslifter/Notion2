@@ -38,7 +38,7 @@ def retrievePropertyValue(property: str, row: dict) -> str:
         iso_str = row["properties"][property]["date"]["start"]
         try:
             if len(iso_str) > 9:
-                value = parse(iso_str).strftime("%Y-%m-%d")
+                value = parse(iso_str).strftime("%Y-%m-%d  %I:%M %p")
             else:
                 value = iso_str
         except ValueError:

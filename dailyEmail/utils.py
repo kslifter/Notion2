@@ -20,9 +20,6 @@ def decodeDatabase(database: dict) -> list[dict[str, str]]:
 
 def retrievePropertyValue(property: str, row: dict) -> str:
     value = ""
-    if row["properties"][property]["type"] == "checkbox":
-        value = row["properties"][property]["checkbox"]
-
     if row["properties"][property]["type"] == "title":
         if row["properties"][property]["title"]:
             value = row["properties"][property]["title"][0]["plain_text"]
@@ -30,22 +27,6 @@ def retrievePropertyValue(property: str, row: dict) -> str:
     if row["properties"][property]["type"] == "rich_text":
         if row["properties"][property]["rich_text"]:
             value = row["properties"][property]["rich_text"][0]["plain_text"]
-
-    if row["properties"][property]["type"] == "number":
-        value = row["properties"][property]["number"]
-
-    if row["properties"][property]["type"] == "date":
-        iso_str = row["properties"][property]["date"]["start"]
-        try:
-            if len(iso_str) > 10:
-                value = parse(iso_str).strftime("%Y/%m/%d  %I:%M %p")
-            else:
-                value = iso_str
-        except ValueError:
-            value = iso_str
-        
-    if row["properties"][property]["type"] == "select":
-        value = row["properties"][property]["select"]["name", "color"]
 
     return str(value)
 

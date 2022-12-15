@@ -40,8 +40,7 @@ database_list = utils.decodeDatabase(database)
 dbProperties = utils.databaseProperties(database_list)
 
 # Filter columns of the database
-dbProperties = ['Checkbox', 'Title', 'Text', 'Number',
-                'Date', 'Select']
+dbProperties = ['Title', 'Text']
 # Data to html table
 title = "\n".join(html.html_table_column(dbProperties))
 rows = "\n".join(html.html_table_row(

@@ -41,11 +41,6 @@ def debugDatabaseObject(database, flag=False):
             if flag:
                 print(row["properties"][columna])
             column_value = ""
-            if row["properties"][columna]["type"] == "checkbox":
-                column_value = row["properties"][columna]["checkbox"]
-
-            if row["properties"][columna]["type"] == "number":
-                column_value = row["properties"][columna]["number"]
 
             if row["properties"][columna]["type"] == "title":
                 if row["properties"][columna]["title"]:
@@ -55,14 +50,6 @@ def debugDatabaseObject(database, flag=False):
                 if row["properties"][columna]["rich_text"]:
                     column_value = row["properties"][columna]["rich_text"][0]["plain_text"]
 
-            if row["properties"][columna]["type"] == "date":
-                column_value = row["properties"][columna]["date"]["start"]
-
-            if row["properties"][columna]["type"] == "formula":
-                eq_type = row["properties"][columna]["formula"]["type"]
-                if eq_type == 'date':
-                    column_value = row["properties"][columna]["formula"][eq_type]['start']
-                column_value = row["properties"][columna]["formula"][eq_type]
 
             print(f"{columna} -> {column_value}")
         print("----------------\n")

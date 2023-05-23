@@ -60,7 +60,7 @@ database_list = utils.decodeDatabase(database)
 dbProperties = utils.databaseProperties(database_list)
 
 # Filter columns of the database
-dbProperties = ['Task', 'Description']
+dbProperties = ['Task', 'Description', 'Assign']
 # Data to html table
 title = "\n".join(html.html_table_column(dbProperties))
 rows = "\n".join(html.html_table_row(

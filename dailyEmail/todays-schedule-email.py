@@ -26,13 +26,15 @@ tomorrow = (
 ).astimezone().isoformat()
 query = {
     "filter": {
-                "property": {
-					"Assign", {
-                "relation": {
-                    "database_id": "Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4"
+			[
+                "properties": {
+					"Assign": {
+						"relation": {
+							"database_id": "Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4",
 							}
 			}
 		}
+	]
    },
 	"sorts": [
 		{
@@ -41,7 +43,6 @@ query = {
 			}
 		]
 }
-
 
 
 # Notion api database block http request

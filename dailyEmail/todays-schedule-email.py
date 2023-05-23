@@ -27,7 +27,7 @@ tomorrow = (
 query = {
     "filter": {
 			[
-                "properties": {
+                "property": {
 					"Assign": {
 						"relation": {
 							"database_id": "Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4",

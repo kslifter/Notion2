@@ -40,9 +40,14 @@ query = {
                }
            }
       ]
-    }
+    },
+	"sorts": [
+		{
+			"property": "Created Time",
+			"direction": "ascending"
+			}
+		]
 }
-
 
 
 # Notion api database block http request

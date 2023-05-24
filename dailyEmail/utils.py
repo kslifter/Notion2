@@ -59,7 +59,9 @@ def debugDatabaseObject(database, flag=False):
             if row["properties"][columna]["type"] == "rich_text":
                 if row["properties"][columna]["rich_text"]:
                     column_value = row["properties"][columna]["rich_text"][0]["plain_text"]
-
+                    
+            if row["properties"][columna]["type"] == "date":
+                column_value = row["properties"][columna]["date"]["start"]
 
             print(f"{columna} -> {column_value}")
         print("----------------\n")

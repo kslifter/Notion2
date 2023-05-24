@@ -28,15 +28,6 @@ def retrievePropertyValue(property: str, row: dict) -> str:
         if row["properties"][property]["rich_text"]:
             value = row["properties"][property]["rich_text"][0]["plain_text"]
          
-    if row["properties"][property]["type"] == "date":
-        iso_str = row["properties"][property]["date"]["start"]
-        try:
-            if len(iso_str) > 10:
-                value = parse(iso_str).strftime("%Y-%m-%d  %I:%M %p")
-            else:
-                value = iso_str
-        except ValueError:
-            value = iso_str
 
     return str(value)
 
@@ -59,10 +50,7 @@ def debugDatabaseObject(database, flag=False):
             if row["properties"][columna]["type"] == "rich_text":
                 if row["properties"][columna]["rich_text"]:
                     column_value = row["properties"][columna]["rich_text"][0]["plain_text"]
-                    
-            if row["properties"][columna]["type"] == "date":
-                column_value = row["properties"][columna]["date"]["start"]
-
+ 
             print(f"{columna} -> {column_value}")
         print("----------------\n")
         count += 1

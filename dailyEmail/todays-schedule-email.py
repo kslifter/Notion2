@@ -25,16 +25,36 @@ tomorrow = (
     datetime.timedelta(days=1)
 ).astimezone().isoformat()
 query = {
-    "filter": {
-                "property": "Assign",
-						"relation": {
-							"contains": "Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4"
-							}
-	},
-	"sorts": [
-		{
-			"property": "Created time",
-			"direction": "ascending"
+
+	"filter_properties": {
+
+   "parent":{
+      "database_id":"f1ade039b952400aa44f59f8ac12e378"
+   },
+   "properties":{
+      "Assign":{
+         "title":[
+            {
+               "text":{
+                  "content":"Assign"
+               }
+            }
+         ]
+      },
+      "Assign":{
+         "relation":[
+            {
+               "id":"Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4"
+            }
+         ]
+      }
+   }
+},
+
+"sorts": [
+			{
+				"property": "Created time",
+					"direction": "ascending"
 			}
 		]
 }

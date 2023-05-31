@@ -26,30 +26,15 @@ tomorrow = (
 ).astimezone().isoformat()
 query = {
 
-	"filter_properties": {
-
-   "parent":{
-      "database_id":"f1ade039b952400aa44f59f8ac12e378"
-   },
-   "properties":{
-      "Assign":{
-         "title":[
-            {
-               "text":{
-                  "content":"Assign"
-               }
-            }
-         ]
-      },
-      "Assign":{
-         "relation":[
-            {
-               "id":"Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4"
-            }
-         ]
+	"filter": {
+    "property": "Assign",
+    "relation": {
+      "contains": "7a6f79df9b02482c998c91de08d3f6d0" {
+        "id": "Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4"
       }
    }
-},
+}
+,
 
 "sorts": [
 			{

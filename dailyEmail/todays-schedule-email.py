@@ -29,7 +29,8 @@ query = {
 	"filter": {
     "property": "Assign",
     "relation": {
-      "contains": "7a6f79df9b02482c998c91de08d3f6d0" {
+      "contains": "7a6f79df9b02482c998c91de08d3f6d0",
+	    {
         "id": "Ian-Hartsook-05a52cbc85d14e178992b3f5a598b1f4"
       }
    }

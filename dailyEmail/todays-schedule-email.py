@@ -26,23 +26,12 @@ tomorrow = (
 ).astimezone().isoformat()
 query = {
   "filter": {
-    "property": "Rollup",
-    "rollup": {
-      "any": {
-        "rich_text": {
-          "contains": "Ian Hartsook"
-        }
+    "property": "Assign",
+    "relation": {
+        "contains": { "05a52cbc85d14e178992b3f5a598b1f4"
       }
     }
   }
-,
-
-"sorts": [
-			{
-				"property": "Created time",
-					"direction": "ascending"
-			}
-		]
 }
 
 

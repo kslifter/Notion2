@@ -24,7 +24,7 @@ tomorrow = (
     datetime.datetime.now(timezone.utc) +
     datetime.timedelta(days=1)
 ).astimezone().isoformat()
-query = {
+query = '{
   "filter": {
     "property": "Assign",
     "relation": {
@@ -32,7 +32,7 @@ query = {
       }
     }
   }
-}
+}'
 
 
 # Notion api database block http request

@@ -24,15 +24,14 @@ tomorrow = (
     datetime.datetime.now(timezone.utc) +
     datetime.timedelta(days=1)
 ).astimezone().isoformat()
-query = '{
+query = {
   "filter": {
     "property": "Assign",
     "relation": {
-        "contains": { "05a52cbc85d14e178992b3f5a598b1f4"
-      }
+        "contains":  "05a52cbc85d14e178992b3f5a598b1f4"
     }
   }
-}'
+}
 
 
 # Notion api database block http request

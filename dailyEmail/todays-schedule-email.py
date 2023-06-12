@@ -25,14 +25,34 @@ tomorrow = (
     datetime.timedelta(days=1)
 ).astimezone().isoformat()
 query = {
-  "filter": {
-    "property": "Name Filter",
-    "formula": {
-        "string": {
-        "contains":  "IH"
+    "filter": {
+        "and": [
+            {
+                "property": "Complete",
+                "checkbox": {
+                    "equals": False
+                }
+            },
+            {
+                "property": "Name Filter",
+                "formula": {
+                    "string": {
+                    "contains": "IH"
+                    }
+                }
+            }
+        ]
+    },
+    "sorts": [
+        {
+            "property": "Due Date",
+            "direction": "ascending"
+        },
+        {
+            "property": "Created Time",
+            "direction": "descending"
         }
-    }
-  }
+    ]
 }
 
 

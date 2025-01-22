@@ -1,4 +1,3 @@
-
 from service import retrieveStoicQuote, retrieveNotionDatabase
 import utils
 from send_email import send_email
@@ -14,53 +13,49 @@ email_from = "ian@primedesign.co"
 email_to = "ian@primedesign.co"
 
 # Notion api config
-password = "Bearer " + token 
+password = "Bearer " + token 
 headers = {
-    "Authorization": password,
-    "Notion-version": "2022-06-28"
+    "Authorization": password,
+    "Notion-version": "2022-06-28"
 }
 
 tomorrow = (
-    datetime.datetime.now(timezone.utc) +
-    datetime.timedelta(days=1)
+    datetime.datetime.now(timezone.utc) +
+    datetime.timedelta(days=1)
 ).astimezone().isoformat()
 query = {
-    "filter": {
-        "and": [
-            {
-                "property": "Complete",
-                "checkbox": {
-                    "equals": False
-                }
-            },
-            {
-                "property": "Name Filter",
-                "formula": {
-                    "string": {
-                    "contains": "IH"
-                    }
-                }
-            }
-        ]
-    },
-    "sorts": [
-        {
-            "property": "Due Date",
-            "direction": "ascending"
-        },
-        {
-            "property": "Created Time",
-            "direction": "descending"
-        }
-    ]
+    "filter": {
+        "and": [
+            {
+                "property": "Complete",
+                "checkbox": {
+                    "equals": False
+                }
+            },
+            {
+                "property": "Assignee",
+                "value": "Ian Hartsook"
+            }
+        ]
+    },
+    "sorts": [
+        {
+            "property": "Priority",
+            "direction": "ascending"
+        },
+        {
+            "property": "Due Date",
+            "direction": "ascending"
+        }
+    ]
 }
 
 
 # Notion api database block http request
 database = retrieveNotionDatabase.retrieveDatabase(
-    databaseId=database_Id,
-    headers=headers,
-    save_to_json=False,
+    databaseId=database_Id,
+    headers=headers,
+    save_to_json=False,
 )
 
 # Print retrieve database data
@@ -75,8 +70,8 @@ dbProperties = ['Task', 'Description', 'Assign', 'Created time']
 # Data to html table
 title = "\n".join(html.html_table_column(dbProperties))
 rows = "\n".join(html.html_table_row(
-    database_list,
-    dbProperties
+    database_list,
+    dbProperties
 ))
 table_html = html.construct_html_table(title, rows)
 
@@ -84,17 +79,17 @@ table_html = html.construct_html_table(title, rows)
 author, stoic_quote = retrieveStoicQuote.random_stoic_quote()
 
 html_msg = html.construct_html_msg(
-    table_html,
-    html.style,
-    html.quote_html(author, stoic_quote)  # Format stoic quote to html
+    table_html,
+    html.style,
+    html.quote_html(author, stoic_quote)  # Format stoic quote to html
 )
 
 # utils.save_html(html_msg)
 
 # Send email with html msg
 send_email(
-    html_msg,
-    email_from,
-    email_to,
-    email_password
+    html_msg,
+    email_from,
+    email_to,
+    email_password
 )

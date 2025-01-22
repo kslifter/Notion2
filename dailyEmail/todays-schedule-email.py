@@ -5,60 +5,59 @@ import html_email as html
 import datetime
 from datetime import timezone
 
-#Variables
+# Variables
 token = "secret_3NgfVbobBT1DXSXZvr0E87ZS4PDRDTNDodwxK7OuOI8"
 database_Id = "7a6f79df9b02482c998c91de08d3f6d0"
 email_password = "ybhfzgsjyaujnors"
 email_from = "ian@primedesign.co"
 email_to = "ian@primedesign.co"
 
-# Notion api config
-password = "Bearer " + token 
+# Notion API config
+password = "Bearer " + token
 headers = {
-    "Authorization": password,
-    "Notion-version": "2022-06-28"
+    "Authorization": password,
+    "Notion-version": "2022-06-28"
 }
 
-tomorrow = (
-    datetime.datetime.now(timezone.utc) +
-    datetime.timedelta(days=1)
-).astimezone().isoformat()
+# Query parameters
 query = {
-    "filter": {
-        "and": [
-            {
-                "property": "Complete",
-                "checkbox": {
-                    "equals": False
-                }
-            },
-            {
-                "property": "Assignee",
-                "value": "Ian Hartsook"
-            }
-        ]
-    },
-    "sorts": [
-        {
-            "property": "Priority",
-            "direction": "ascending"
-        },
-        {
-            "property": "Due Date",
-            "direction": "ascending"
-        }
-    ]
+    "filter": {
+        "and": [
+            {
+                "property": "COMPLETE",
+                "checkbox": {
+                    "equals": False
+                }
+            },
+            {
+                "property": "ASSIGNEE",
+                "people": {
+                    "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
+                }
+            }
+        ]
+    },
+    "sorts": [
+        {
+            "property": "PRIORITY",
+            "direction": "ascending"
+        },
+        {
+            "property": "DUE DATE",
+            "direction": "ascending"
+        }
+    ]
 }
 
-
-# Notion api database block http request
+# Notion API database block HTTP request
 database = retrieveNotionDatabase.retrieveDatabase(
-    databaseId=database_Id,
-    headers=headers,
-    save_to_json=False,
+    databaseId=database_Id,
+    headers=headers,
+    save_to_json=False,
+    query=query
 )
 
-# Print retrieve database data
+# Print retrieved database data
 # utils.debugDatabaseObject(database)
 
 # Get data we want from database.json object
@@ -67,11 +66,11 @@ dbProperties = utils.databaseProperties(database_list)
 
 # Filter columns of the database
 dbProperties = ['Task', 'Description', 'Assign', 'Created time']
-# Data to html table
+# Data to HTML table
 title = "\n".join(html.html_table_column(dbProperties))
 rows = "\n".join(html.html_table_row(
-    database_list,
-    dbProperties
+    database_list,
+    dbProperties
 ))
 table_html = html.construct_html_table(title, rows)
 
@@ -79,17 +78,17 @@ table_html = html.construct_html_table(title, rows)
 author, stoic_quote = retrieveStoicQuote.random_stoic_quote()
 
 html_msg = html.construct_html_msg(
-    table_html,
-    html.style,
-    html.quote_html(author, stoic_quote)  # Format stoic quote to html
+    table_html,
+    html.style,
+    html.quote_html(author, stoic_quote)  # Format stoic quote to HTML
 )
 
 # utils.save_html(html_msg)
 
-# Send email with html msg
+# Send email with HTML msg
 send_email(
-    html_msg,
-    email_from,
-    email_to,
-    email_password
+    html_msg,
+    email_from,
+    email_to,
+    email_password
 )

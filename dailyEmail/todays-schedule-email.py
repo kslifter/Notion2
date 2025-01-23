@@ -32,7 +32,7 @@ query = {
             {
                 "property": "ASSIGNEE",
                 "people": {
-                    "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
+                    "equals": "1dae38cb9f4f438dbe13cadc2b0923e1"
                 }
             },
             {
@@ -48,13 +48,7 @@ query = {
                 }
             }
         ]
-    },
-    "sorts": [
-        {
-            "property": "Projects",
-            "direction": "ascending"
-        }
-    ]
+    }
 }
 
 

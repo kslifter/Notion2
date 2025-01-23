@@ -40,7 +40,7 @@ query = {
     "sorts": [
         {
             "property": "PRIORITY",
-            "direction": "ascending"
+            "direction": "descending"
         },
         {
             "property": "DUE DATE",

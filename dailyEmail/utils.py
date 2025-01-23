@@ -27,7 +27,12 @@ def retrievePropertyValue(property: str, row: dict) -> str:
     if row["properties"][property]["type"] == "rich_text":
         if row["properties"][property]["rich_text"]:
             value = row["properties"][property]["rich_text"][0]["plain_text"]
-         
+
+    if row["properties"][property]["type"] == "relation":
+    if row["properties"][property]["relation"]:
+        value = ", ".join(
+            [rel["id"] for rel in row["properties"][property]["relation"]]
+        )       
 
     return str(value)
 

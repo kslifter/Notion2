@@ -32,7 +32,7 @@ query = {
             {
                 "property": "ASSIGNEE",
                 "people": {
-                    "equals": "1dae38cb9f4f438dbe13cadc2b0923e1"
+                    "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
                 }
             },
             {
@@ -50,7 +50,6 @@ query = {
         ]
     }
 }
-
 
 # Notion API database block HTTP request
 database = retrieveNotionDatabase.retrieveDatabase(

@@ -34,20 +34,29 @@ query = {
                 "people": {
                     "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
                 }
+            },
+            {
+                "property": "PRIORITY",
+                "select": {
+                    "equals": "High"
+                }
+            },
+            {
+                "property": "DB ENTRY TYPE",
+                "multi_select": {
+                    "contains": "Task"
+                }
             }
         ]
     },
     "sorts": [
         {
-            "property": "PRIORITY",
-            "direction": "descending"
-        },
-        {
-            "property": "DUE DATE",
+            "property": "Projects",
             "direction": "ascending"
         }
     ]
 }
+
 
 # Notion API database block HTTP request
 database = retrieveNotionDatabase.retrieveDatabase(

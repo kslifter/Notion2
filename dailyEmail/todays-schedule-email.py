@@ -67,14 +67,14 @@ database = retrieveNotionDatabase.retrieveDatabase(
 )
 
 # Print retrieved database data
-# utils.debugDatabaseObject(database)
+utils.debugDatabaseObject(database)
 
 # Get data we want from database.json object
 database_list = utils.decodeDatabase(database)
 dbProperties = utils.databaseProperties(database_list)
 
 # Filter columns of the database
-dbProperties = ['Task', 'Description', 'Assign', 'Created time']
+dbProperties = ['MEETING / TASK NAME', 'Projects', 'DUE DATE', 'PRIORITY']
 # Data to HTML table
 title = "\n".join(html.html_table_column(dbProperties))
 rows = "\n".join(html.html_table_row(

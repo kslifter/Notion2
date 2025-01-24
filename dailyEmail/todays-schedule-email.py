@@ -59,6 +59,9 @@ database = retrieveNotionDatabase.retrieveDatabase(
     query=query
 )
 
+# Log raw response
+print(json.dumps(database, indent=4))
+
 # Print retrieved database data
 utils.debugDatabaseObject(database)
 

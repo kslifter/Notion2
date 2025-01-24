@@ -24,32 +24,10 @@ headers = {
 # Query parameters
 query = {
     "filter": {
-        "and": [
-            {
-                "property": "COMPLETE",
-                "checkbox": {
-                    "equals": False
-                }
-            },
-            {
-                "property": "ASSIGNEE",
-                "people": {
-                    "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
-                }
-            },
-            {
-                "property": "PRIORITY",
-                "select": {
-                    "equals": "High"
-                }
-            },
-            {
-                "property": "DB ENTRY TYPE",
-                "multi_select": {
-                    "contains": "Task"
-                }
-            }
-        ]
+        "property": "ASSIGNEE",
+        "people": {
+            "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
+        }
     }
 }
 

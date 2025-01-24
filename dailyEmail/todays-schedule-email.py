@@ -1,3 +1,5 @@
+import json 
+
 from service import retrieveStoicQuote, retrieveNotionDatabase
 import utils
 from send_email import send_email

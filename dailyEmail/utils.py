@@ -7,12 +7,14 @@ def decodeDatabase(database: dict) -> list[dict[str, str]]:
         for row in database["results"]:
             row_properties = {}
             for column in row["properties"].keys():
-                row_properties[column] = retrievePropertyValue(
-                    column,
-                    row
-                )
+                row_properties[column] = retrievePropertyValue(column, row)
             row_properties['url'] = row['url']
             db.append(row_properties)
+
+        # Debug: Print each decoded entry
+        for entry in db:
+            print(json.dumps(entry, indent=4))
+
         return db
     except KeyError:
         return []
@@ -20,21 +22,33 @@ def decodeDatabase(database: dict) -> list[dict[str, str]]:
 
 def retrievePropertyValue(property: str, row: dict) -> str:
     value = ""
-    if row["properties"][property]["type"] == "title":
-        if row["properties"][property]["title"]:
-            value = row["properties"][property]["title"][0]["plain_text"]
+    prop = row["properties"].get(property)
 
-    if row["properties"][property]["type"] == "rich_text":
-        if row["properties"][property]["rich_text"]:
-            value = row["properties"][property]["rich_text"][0]["plain_text"]
+    if not prop:  # Skip if property doesn't exist
+        return value
 
-    if row["properties"][property]["type"] == "relation":
-        if row["properties"][property]["relation"]:
-            value = ", ".join(
-                [rel["id"] for rel in row["properties"][property]["relation"]]
-            )
+    if prop["type"] == "title":
+        if prop["title"]:
+            value = prop["title"][0]["plain_text"]
 
-    return str(value)
+    elif prop["type"] == "relation":
+        if prop["relation"]:
+            value = ", ".join([rel["id"] for rel in prop["relation"]])  # Or rel["name"] if name is available
+
+    elif prop["type"] == "date":
+        if prop["date"]:
+            value = prop["date"]["start"]
+
+    elif prop["type"] == "select":
+        if prop["select"]:
+            value = prop["select"]["name"]
+
+    elif prop["type"] == "multi_select":
+        if prop["multi_select"]:
+            value = ", ".join([ms["name"] for ms in prop["multi_select"]])
+
+    return value
+
 
 
 

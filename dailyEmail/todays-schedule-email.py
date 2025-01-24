@@ -24,12 +24,23 @@ headers = {
 # Query parameters
 query = {
     "filter": {
-        "property": "ASSIGNEE",
-        "people": {
-            "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
-        }
+        "and": [
+            {
+                "property": "ASSIGNEE",
+                "people": {
+                    "contains": "1dae38cb9f4f438dbe13cadc2b0923e1"
+                }
+            },
+            {
+                "property": "PRIORITY",
+                "select": {
+                    "equals": "High"
+                }
+            }
+        ]
     }
 }
+
 
 # Notion API database block HTTP request
 database = retrieveNotionDatabase.retrieveDatabase(

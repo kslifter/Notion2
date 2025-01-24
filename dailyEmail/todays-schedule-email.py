@@ -34,7 +34,7 @@ query = {
             {
                 "property": "PRIORITY",
                 "select": {
-                    "equals": "High"
+                    "equals": "High 🔥"
                 }
             }
         ]

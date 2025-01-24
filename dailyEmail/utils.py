@@ -25,29 +25,40 @@ def retrievePropertyValue(property: str, row: dict) -> str:
     prop = row["properties"].get(property)
 
     if not prop:  # Skip if property doesn't exist
-        return value
+        return "N/A"
 
     if prop["type"] == "title":
         if prop["title"]:
             value = prop["title"][0]["plain_text"]
+        else:
+            value = "No Title"
 
     elif prop["type"] == "relation":
         if prop["relation"]:
-            value = ", ".join([rel["id"] for rel in prop["relation"]])  # Or rel["name"] if name is available
+            value = ", ".join([rel["id"] for rel in prop["relation"]])
+        else:
+            value = "No Projects"
 
     elif prop["type"] == "date":
-        if prop["date"]:
+        if prop["date"] and prop["date"]["start"]:
             value = prop["date"]["start"]
+        else:
+            value = "No Due Date"
 
     elif prop["type"] == "select":
-        if prop["select"]:
+        if prop["select"] and prop["select"]["name"]:
             value = prop["select"]["name"]
+        else:
+            value = "No Priority"
 
     elif prop["type"] == "multi_select":
         if prop["multi_select"]:
             value = ", ".join([ms["name"] for ms in prop["multi_select"]])
+        else:
+            value = "No Entry Type"
 
     return value
+
 
 
 

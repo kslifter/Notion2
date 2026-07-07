@@ -49,11 +49,11 @@ jobs:
           ASSIGNEE_MATCHES: Ian Hartsook,ihartsook@huttonbuilds.com
           PROJECT_STATUS_PROPERTY: Project Status
           PROJECT_STATUS_VALUES: In progress
-          INTERNAL_PROJECT_PROPERTY: Internal Project
-          INTERNAL_PROJECT_VALUE: false
+          #INTERNAL_PROJECT_PROPERTY: Internal Project
+          #INTERNAL_PROJECT_VALUE: false
           STATUS_PROPERTY: STATUS
           STATUS_VALUES: In progress
-          PROJECT_PROPERTY: Projects
+          PROJECT_PROPERTY: HT Project
           DUE_DATE_PROPERTY: DUE DATE
           PRIORITY_PROPERTY: PRIORITY
 

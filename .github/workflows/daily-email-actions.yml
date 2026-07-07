@@ -33,12 +33,12 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_TASKS_DATABASE_ID: ${{ secrets.NOTION_TASKS_DATABASE_ID }}
 
-          # Email. For Google Workspace/Gmail SMTP, SMTP_PASSWORD is usually an app password.
-          EMAIL_FROM: ihartsook@huttonbuilds.com
+        # Email. SMTP_PASSWORD should be a Gmail app password for ian.hartsook@gmail.com.
+          EMAIL_FROM: ian.hartsook@gmail.com
           EMAIL_TO: ihartsook@huttonbuilds.com
           SMTP_HOST: smtp.gmail.com
           SMTP_PORT: "587"
-          SMTP_USERNAME: ihartsook@huttonbuilds.com
+          SMTP_USERNAME: ian.hartsook@gmail.com
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
 
           # Notion view/filter settings from your screenshot.

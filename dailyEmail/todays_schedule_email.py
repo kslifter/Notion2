@@ -69,7 +69,7 @@ NOTION_TASKS_DATABASE_ID = env("NOTION_TASKS_DATABASE_ID", required=True).replac
 NOTION_VERSION = env("NOTION_VERSION", "2022-06-28")
 TIME_ZONE = env("TIME_ZONE", "America/Chicago")
 
-EMAIL_FROM = env("EMAIL_FROM", "ihartsook@huttonbuilds.com")
+EMAIL_FROM = env("EMAIL_FROM", "ian.hartsook@gmail.com")
 EMAIL_TO = env("EMAIL_TO", "ihartsook@huttonbuilds.com")
 SMTP_HOST = env("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(env("SMTP_PORT", "587"))
@@ -84,6 +84,8 @@ DUE_DATE_PROPERTY = env("DUE_DATE_PROPERTY", "DUE DATE")
 DB_ENTRY_TYPE_PROPERTY = env("DB_ENTRY_TYPE_PROPERTY", "DB ENTRY TYPE")
 ASSIGNEE_PROPERTY = env("ASSIGNEE_PROPERTY", "ASSIGNEE")
 PROJECT_STATUS_PROPERTY = env("PROJECT_STATUS_PROPERTY", "Project Status")
+INTERNAL_PROJECT_PROPERTY = env("INTERNAL_PROJECT_PROPERTY", "")
+INTERNAL_PROJECT_VALUE = env("INTERNAL_PROJECT_VALUE", "false").strip().lower()
 STATUS_PROPERTY = env("STATUS_PROPERTY", "STATUS")
 PRIORITY_PROPERTY = env("PRIORITY_PROPERTY", "PRIORITY")
 
@@ -217,9 +219,18 @@ def resolve_property_name(schema: dict[str, Any], preferred: str, candidates: li
     return preferred
 
 
+
+
+def resolve_optional_property_name(schema: dict[str, Any], preferred: str, candidates: list[str]) -> str:
+    """Resolve an optional property; return blank if it cannot be found."""
+    if not preferred and not candidates:
+        return ""
+    resolved = resolve_property_name(schema, preferred, candidates)
+    return resolved if resolved in schema else ""
+
 def resolve_configured_properties(schema: dict[str, Any]) -> None:
     global PROJECT_PROPERTY, DUE_DATE_PROPERTY, DB_ENTRY_TYPE_PROPERTY, ASSIGNEE_PROPERTY
-    global PROJECT_STATUS_PROPERTY, STATUS_PROPERTY, PRIORITY_PROPERTY, TITLE_PROPERTY
+    global PROJECT_STATUS_PROPERTY, INTERNAL_PROJECT_PROPERTY, STATUS_PROPERTY, PRIORITY_PROPERTY, TITLE_PROPERTY
 
     TITLE_PROPERTY = resolve_property_name(
         schema,
@@ -250,6 +261,11 @@ def resolve_configured_properties(schema: dict[str, Any]) -> None:
         schema,
         PROJECT_STATUS_PROPERTY,
         ["Project Status", "PROJECT STATUS", "Project status", "Project - Status"],
+    )
+    INTERNAL_PROJECT_PROPERTY = resolve_optional_property_name(
+        schema,
+        INTERNAL_PROJECT_PROPERTY,
+        ["Internal Project", "Internal", "Internal?"],
     )
     STATUS_PROPERTY = resolve_property_name(
         schema,
@@ -319,6 +335,13 @@ def make_people_filter(schema: dict[str, Any], prop_name: str, user_id: str) -> 
     return None
 
 
+def make_checkbox_filter(schema: dict[str, Any], prop_name: str, desired: str) -> dict[str, Any] | None:
+    if not prop_name or prop_type(schema, prop_name) != "checkbox":
+        return None
+    checked = desired in {"true", "yes", "1", "checked"}
+    return {"property": prop_name, "checkbox": {"equals": checked}}
+
+
 def make_due_filter(schema: dict[str, Any], prop_name: str, today_iso: str) -> dict[str, Any] | None:
     if prop_type(schema, prop_name) != "date":
         return None
@@ -342,6 +365,7 @@ def build_query(schema: dict[str, Any]) -> dict[str, Any]:
     for maybe_filter in [
         make_value_filter(schema, DB_ENTRY_TYPE_PROPERTY, DB_ENTRY_TYPE_VALUES),
         make_value_filter(schema, STATUS_PROPERTY, STATUS_VALUES),
+        make_checkbox_filter(schema, INTERNAL_PROJECT_PROPERTY, INTERNAL_PROJECT_VALUE),
         make_people_filter(schema, ASSIGNEE_PROPERTY, NOTION_ASSIGNEE_USER_ID),
         make_due_filter(schema, DUE_DATE_PROPERTY, today_iso),
         # Project Status is often a rollup from the project relation; filtered locally.
@@ -468,6 +492,14 @@ def assignee_match(page: dict[str, Any]) -> bool:
     return bool(actual & set(ASSIGNEE_MATCHES))
 
 
+def internal_project_match(page: dict[str, Any]) -> bool:
+    if not INTERNAL_PROJECT_PROPERTY:
+        return True
+    actual = property_values_lower(page, INTERNAL_PROJECT_PROPERTY)
+    desired = INTERNAL_PROJECT_VALUE in {"true", "yes", "1", "checked"}
+    return str(desired).lower() in actual
+
+
 def parse_iso_date(value: str) -> date | None:
     if not value:
         return None
@@ -518,6 +550,7 @@ def local_filters_match(page: dict[str, Any]) -> bool:
             exact_value_match(page, DB_ENTRY_TYPE_PROPERTY, DB_ENTRY_TYPE_VALUES),
             exact_value_match(page, STATUS_PROPERTY, STATUS_VALUES),
             exact_value_match(page, PROJECT_STATUS_PROPERTY, PROJECT_STATUS_VALUES),
+            internal_project_match(page),
             assignee_match(page),
             due_mode_match(page),
         ]
@@ -587,45 +620,59 @@ def build_html_email(tasks: list[Task]) -> str:
         for project in task.project_names:
             grouped[project].append(task)
 
+    summary_items = []
+    for project in sorted(grouped.keys(), key=str.lower):
+        count = len(grouped[project])
+        summary_items.append(
+            f'<span class="project-chip"><strong>{html.escape(project)}</strong> <em>{count}</em></span>'
+        )
+
     project_sections = []
     for project in sorted(grouped.keys(), key=str.lower):
         rows = []
         for task in grouped[project]:
+            due = fmt_date(task.due_date)
             rows.append(
                 f"""
                 <tr>
                     <td class="task-title">{task_link(task)}</td>
-                    <td class="{due_class(task.due_date)}">{html.escape(fmt_date(task.due_date))}</td>
-                    <td>{html.escape(task.status or '—')}</td>
-                    <td>{html.escape(task.priority or '—')}</td>
+                    <td class="due {due_class(task.due_date)}">{html.escape(due)}</td>
                 </tr>
                 """
             )
 
         project_sections.append(
             f"""
-            <h2>{html.escape(project)} <span>{len(grouped[project])}</span></h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Task</th>
-                        <th>Due</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                    </tr>
-                </thead>
-                <tbody>{''.join(rows)}</tbody>
-            </table>
+            <section class="project-section">
+                <div class="project-header">
+                    <span class="caret">▾</span>
+                    <span class="project-name">{html.escape(project)}</span>
+                    <span class="count">{len(grouped[project])}</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>{''.join(rows)}</tbody>
+                </table>
+            </section>
             """
         )
 
     if not project_sections:
         project_sections.append("<p class='empty'>No matching active tasks found for the current filters.</p>")
 
+    internal_filter = ""
+    if INTERNAL_PROJECT_PROPERTY:
+        internal_filter = f" · {INTERNAL_PROJECT_PROPERTY}: {INTERNAL_PROJECT_VALUE}"
+
     filter_summary = (
         f"DB ENTRY TYPE: {', '.join(DB_ENTRY_TYPE_VALUES)} · "
         f"ASSIGNEE: {', '.join(ASSIGNEE_MATCHES)} · "
-        f"Project Status: {', '.join(PROJECT_STATUS_VALUES)} · "
+        f"Project Status: {', '.join(PROJECT_STATUS_VALUES)}{internal_filter} · "
         f"STATUS: {', '.join(STATUS_VALUES)} · "
         f"Due mode: {DUE_MODE}"
     )
@@ -635,18 +682,26 @@ def build_html_email(tasks: list[Task]) -> str:
 <head>
 <meta charset="utf-8">
 <style>
-body {{ font-family: Arial, sans-serif; color: #222; line-height: 1.4; }}
-.wrapper {{ max-width: 900px; margin: 0 auto; padding: 16px; }}
+body {{ font-family: Arial, sans-serif; color: #222; line-height: 1.4; background: #ffffff; }}
+.wrapper {{ max-width: 960px; margin: 0 auto; padding: 16px; }}
 h1 {{ font-size: 24px; margin: 0 0 4px 0; }}
 .subtitle {{ color: #666; margin: 0 0 16px 0; }}
-.filter-summary {{ font-size: 12px; color: #666; background: #f5f5f5; padding: 10px; border-radius: 6px; margin-bottom: 18px; }}
-h2 {{ font-size: 18px; margin: 24px 0 8px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }}
-h2 span {{ font-size: 12px; color: #666; font-weight: normal; }}
-table {{ border-collapse: collapse; width: 100%; margin-bottom: 12px; }}
-th, td {{ text-align: left; border-bottom: 1px solid #e6e6e6; padding: 8px 6px; vertical-align: top; }}
-th {{ font-size: 12px; text-transform: uppercase; color: #666; }}
+.filter-summary {{ font-size: 12px; color: #666; background: #f5f5f5; padding: 10px; border-radius: 8px; margin-bottom: 16px; }}
+.summary {{ margin: 0 0 18px 0; }}
+.project-chip {{ display: inline-block; margin: 0 6px 8px 0; padding: 6px 10px; border: 1px solid #dedede; border-radius: 999px; background: #fafafa; font-size: 13px; }}
+.project-chip em {{ font-style: normal; color: #666; margin-left: 4px; }}
+.project-section {{ margin: 18px 0 22px 0; border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden; }}
+.project-header {{ background: #f7f7f5; padding: 10px 12px; font-size: 16px; font-weight: 700; }}
+.caret {{ color: #555; margin-right: 6px; }}
+.project-name {{ text-decoration: underline; }}
+.count {{ display: inline-block; margin-left: 8px; color: #666; font-size: 12px; font-weight: 400; }}
+table {{ border-collapse: collapse; width: 100%; }}
+th, td {{ text-align: left; border-bottom: 1px solid #eeeeee; padding: 9px 12px; vertical-align: top; }}
+tr:last-child td {{ border-bottom: none; }}
+th {{ font-size: 12px; text-transform: uppercase; color: #666; background: #fcfcfc; }}
 a {{ color: #0b57d0; text-decoration: none; }}
-.task-title {{ width: 55%; }}
+.task-title {{ width: 78%; }}
+.due {{ width: 22%; white-space: nowrap; }}
 .overdue {{ font-weight: bold; color: #b00020; }}
 .today {{ font-weight: bold; color: #9a6700; }}
 .empty {{ padding: 16px; background: #f5f5f5; border-radius: 6px; }}
@@ -655,15 +710,15 @@ a {{ color: #0b57d0; text-decoration: none; }}
 </head>
 <body>
 <div class="wrapper">
-    <h1>Notion Tasks</h1>
+    <h1>Notion Tasks by Project</h1>
     <p class="subtitle">{now.strftime('%A, %B %d, %Y')} · {len(tasks)} task{'s' if len(tasks) != 1 else ''}</p>
     <div class="filter-summary">{html.escape(filter_summary)}</div>
+    <div class="summary">{''.join(summary_items)}</div>
     {''.join(project_sections)}
     <p class="footer">Sent automatically from GitHub Actions using the RevtoNotion-connected Notion integration.</p>
 </div>
 </body>
 </html>"""
-
 
 def build_plain_text(tasks: list[Task]) -> str:
     grouped: dict[str, list[Task]] = defaultdict(list)
@@ -671,19 +726,18 @@ def build_plain_text(tasks: list[Task]) -> str:
         for project in task.project_names:
             grouped[project].append(task)
 
-    lines = [f"Notion Tasks - {date.today().isoformat()}", ""]
+    lines = [f"Notion Tasks by Project - {date.today().isoformat()}", ""]
     for project in sorted(grouped.keys(), key=str.lower):
-        lines.append(project)
-        lines.append("-" * len(project))
+        lines.append(f"▾ {project} ({len(grouped[project])})")
+        lines.append("-" * (len(project) + 6))
         for task in grouped[project]:
-            lines.append(f"- {task.title} | Due: {fmt_date(task.due_date)} | Status: {task.status or '—'} | Priority: {task.priority or '—'}")
+            lines.append(f"- {task.title} | Due: {fmt_date(task.due_date)}")
             if task.url:
                 lines.append(f"  {task.url}")
         lines.append("")
     if not tasks:
         lines.append("No matching active tasks found.")
     return "\n".join(lines)
-
 
 def send_email(subject: str, html_body: str, text_body: str) -> None:
     msg = MIMEMultipart("alternative")
@@ -721,6 +775,7 @@ def main() -> int:
         "DB Entry Type": DB_ENTRY_TYPE_PROPERTY,
         "Assignee": ASSIGNEE_PROPERTY,
         "Project Status": PROJECT_STATUS_PROPERTY,
+        "Internal Project": INTERNAL_PROJECT_PROPERTY or "not configured",
         "Status": STATUS_PROPERTY,
         "Priority": PRIORITY_PROPERTY,
     }.items():
@@ -742,7 +797,7 @@ def main() -> int:
     text_body = build_plain_text(tasks)
 
     today = datetime.now(ZoneInfo(TIME_ZONE)).strftime("%B %d, %Y")
-    subject = f"Notion Tasks - {today}"
+    subject = f"Notion Tasks by Project - {today}"
 
     print(f"Sending email to {EMAIL_TO}...")
     send_email(subject, html_body, text_body)

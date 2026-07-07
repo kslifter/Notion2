@@ -262,11 +262,16 @@ def resolve_configured_properties(schema: dict[str, Any]) -> None:
         PROJECT_STATUS_PROPERTY,
         ["Project Status", "PROJECT STATUS", "Project status", "Project - Status"],
     )
-    INTERNAL_PROJECT_PROPERTY = resolve_optional_property_name(
-        schema,
-        INTERNAL_PROJECT_PROPERTY,
-        ["Internal Project", "Internal", "Internal?"],
-    )
+    # Only use the Internal Project filter if it is explicitly configured.
+    # If the workflow/.env leaves INTERNAL_PROJECT_PROPERTY blank, do not auto-detect it.
+    if INTERNAL_PROJECT_PROPERTY:
+        INTERNAL_PROJECT_PROPERTY = resolve_optional_property_name(
+            schema,
+            INTERNAL_PROJECT_PROPERTY,
+            ["Internal Project", "Internal", "Internal?"],
+        )
+    else:
+        INTERNAL_PROJECT_PROPERTY = ""
     STATUS_PROPERTY = resolve_property_name(
         schema,
         STATUS_PROPERTY,

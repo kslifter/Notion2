@@ -33,7 +33,7 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_TASKS_DATABASE_ID: ${{ secrets.NOTION_TASKS_DATABASE_ID }}
 
-        # Email. SMTP_PASSWORD should be a Gmail app password for ian.hartsook@gmail.com.
+          # Email. For Gmail SMTP, SMTP_PASSWORD should be an app password for ian.hartsook@gmail.com.
           EMAIL_FROM: ian.hartsook@gmail.com
           EMAIL_TO: ihartsook@huttonbuilds.com
           SMTP_HOST: smtp.gmail.com
@@ -49,8 +49,10 @@ jobs:
           ASSIGNEE_MATCHES: Ian Hartsook,ihartsook@huttonbuilds.com
           PROJECT_STATUS_PROPERTY: Project Status
           PROJECT_STATUS_VALUES: In progress
+          INTERNAL_PROJECT_PROPERTY: Internal Project
+          INTERNAL_PROJECT_VALUE: false
           STATUS_PROPERTY: STATUS
-          STATUS_VALUES: In progress,To-do
+          STATUS_VALUES: In progress
           PROJECT_PROPERTY: Projects
           DUE_DATE_PROPERTY: DUE DATE
           PRIORITY_PROPERTY: PRIORITY

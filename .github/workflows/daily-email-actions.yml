@@ -1,32 +1,60 @@
-name: Daily email
+name: Daily Notion Task Email
 
-# Controls when the workflow will run
 on:
   schedule:
-    - cron:  '30 5 * * *' # https://crontab.guru/#30_5_*_*_*
-
-  # Allows you to run this workflow manually from the Actions tab
+    # 6:30 AM Central time, weekdays. Change to "* * *" day fields if you want weekends too.
+    - cron: "30 6 * * 1-5"
+      timezone: "America/Chicago"
   workflow_dispatch:
 
 jobs:
-  build:
+  send-task-email:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-      - name: Setup python
-        uses: actions/setup-python@v2
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11.1
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
-            python -m pip install --upgrade pip
-            pip install requests python-dateutil
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-  
-      - name: Run todays-schedule-email.py script
-        run: python dailyEmail/todays-schedule-email.py
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Send Notion task email
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_TASKS_DATABASE_ID: ${{ secrets.NOTION_TASKS_DATABASE_ID }}
+
+          # Email. For Google Workspace/Gmail SMTP, SMTP_PASSWORD is usually an app password.
+          EMAIL_FROM: ihartsook@huttonbuilds.com
+          EMAIL_TO: ihartsook@huttonbuilds.com
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: "587"
+          SMTP_USERNAME: ihartsook@huttonbuilds.com
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+
+          # Notion view/filter settings from your screenshot.
+          TIME_ZONE: America/Chicago
+          DB_ENTRY_TYPE_PROPERTY: DB ENTRY TYPE
+          DB_ENTRY_TYPE_VALUES: Task
+          ASSIGNEE_PROPERTY: ASSIGNEE
+          ASSIGNEE_MATCHES: Ian Hartsook,ihartsook@huttonbuilds.com
+          PROJECT_STATUS_PROPERTY: Project Status
+          PROJECT_STATUS_VALUES: In progress
+          STATUS_PROPERTY: STATUS
+          STATUS_VALUES: In progress,To-do
+          PROJECT_PROPERTY: Projects
+          DUE_DATE_PROPERTY: DUE DATE
+          PRIORITY_PROPERTY: PRIORITY
+
+          # Options: all_open, due_today_overdue, next_7_days
+          DUE_MODE: all_open
+        run: python dailyEmail/todays_schedule_email.py

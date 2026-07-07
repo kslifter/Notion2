@@ -4,7 +4,7 @@ This replaces the old one-file daily email script with a safer workflow:
 
 - No hard-coded Notion tokens or email passwords
 - Filters match the Notion view shown in the screenshot
-- Tasks are grouped by project in the email
+- Tasks are grouped by project in the email with a more Notion-like project section layout
 - Relation project IDs are resolved to project names
 - GitHub Action uses current `checkout` and `setup-python` actions
 - Workflow can run on a Central Time schedule and can still be run manually
@@ -40,7 +40,7 @@ Create these secrets:
 |---|---|
 | `NOTION_TOKEN` | Secret token for the Notion connection/integration that has access to the HT Tasks database. In your screenshot this is the RevtoNotion connection. |
 | `NOTION_TASKS_DATABASE_ID` | Database ID for the HT Tasks database/source. |
-| `SMTP_PASSWORD` | Email app password or SMTP password for `ihartsook@huttonbuilds.com`. |
+| `SMTP_PASSWORD` | Email app password or Gmail app password for `ian.hartsook@gmail.com`. |
 
 ## Notion setup
 
@@ -52,7 +52,7 @@ The default filter settings match your screenshot:
 DB ENTRY TYPE: Task
 ASSIGNEE: Ian Hartsook
 Project Status: In progress
-STATUS: In progress, To-do
+STATUS: In progress
 Grouped by: Projects
 Sorted by: DUE DATE ascending
 ```
@@ -97,4 +97,32 @@ If you want all active tasks from the screenshot-style filtered view, leave:
 
 ```text
 DUE_MODE=all_open
+```
+
+
+## Project-view email layout
+
+The email now shows each project as its own grouped section, similar to the Notion Projects view.
+Inside each project group, the task rows only show:
+
+```text
+Task | Due
+```
+
+Status and Priority are still used for filtering when configured, but they are no longer displayed as columns in the email.
+
+The updated default filters are:
+
+```text
+DB ENTRY TYPE: Task
+Internal Project: unchecked
+Project Status: In progress
+ASSIGNEE: Ian Hartsook
+STATUS: In progress
+```
+
+If you want To-do tasks included again, change the workflow env value back to:
+
+```text
+STATUS_VALUES: In progress,To-do
 ```

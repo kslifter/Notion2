@@ -2,7 +2,7 @@ name: Daily Notion Task Email
 
 on:
   schedule:
-    # 6:30 AM Central time, weekdays. Change to "* * *" day fields if you want weekends too.
+    # 6:30 AM Central time, weekdays. Change the day field to * if you want weekends too.
     - cron: "30 6 * * 1-5"
       timezone: "America/Chicago"
   workflow_dispatch:
@@ -41,22 +41,6 @@ jobs:
           SMTP_USERNAME: ian.hartsook@gmail.com
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
 
-          # Notion view/filter settings from your screenshot.
           TIME_ZONE: America/Chicago
-          DB_ENTRY_TYPE_PROPERTY: DB ENTRY TYPE
-          DB_ENTRY_TYPE_VALUES: Task
-          ASSIGNEE_PROPERTY: ASSIGNEE
-          ASSIGNEE_MATCHES: Ian Hartsook,ihartsook@huttonbuilds.com
-          PROJECT_STATUS_PROPERTY: Project Status
-          PROJECT_STATUS_VALUES: In progress
-          #INTERNAL_PROJECT_PROPERTY: Internal Project
-          #INTERNAL_PROJECT_VALUE: false
-          STATUS_PROPERTY: STATUS
-          STATUS_VALUES: In progress
-          PROJECT_PROPERTY: HT Project
-          DUE_DATE_PROPERTY: DUE DATE
-          PRIORITY_PROPERTY: PRIORITY
-
-          # Options: all_open, due_today_overdue, next_7_days
-          DUE_MODE: all_open
+          TASK_EMAIL_CONFIG: dailyEmail/task_email_config.json
         run: python dailyEmail/todays_schedule_email.py

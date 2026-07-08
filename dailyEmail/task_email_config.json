@@ -1,0 +1,93 @@
+{
+  "email": {
+    "title": "Notion Tasks by Project",
+    "subject_prefix": "Notion Tasks by Project",
+    "group_by": "project",
+    "show_filter_summary": true
+  },
+  "properties": {
+    "title": "TASK",
+    "project": "HT Project",
+    "due_date": "DUE DATE",
+    "db_entry_type": "DB ENTRY TYPE",
+    "assignee": "ASSIGNEE",
+    "project_status": "Project Status",
+    "status": "STATUS",
+    "priority": "PRIORITY",
+    "discipline": "DISCIPLINE",
+    "internal_project": "Internal Project"
+  },
+  "filter_options": {
+    "tasks_only": {
+      "enabled": true,
+      "property_key": "db_entry_type",
+      "operator": "any_equals",
+      "values": ["Task"]
+    },
+    "assigned_to_ian": {
+      "enabled": true,
+      "property_key": "assignee",
+      "operator": "contains_any",
+      "values": ["Ian Hartsook", "ihartsook@huttonbuilds.com"]
+    },
+    "active_projects": {
+      "enabled": true,
+      "property_key": "project_status",
+      "operator": "any_equals",
+      "values": ["In progress"]
+    },
+    "task_status": {
+      "enabled": true,
+      "property_key": "status",
+      "operator": "any_equals",
+      "values": ["In progress"]
+    },
+    "internal_projects_only": {
+      "enabled": false,
+      "property_key": "internal_project",
+      "operator": "checkbox_equals",
+      "value": true
+    },
+    "non_internal_projects_only": {
+      "enabled": false,
+      "property_key": "internal_project",
+      "operator": "checkbox_equals",
+      "value": false
+    },
+    "due_today_or_overdue": {
+      "enabled": false,
+      "property_key": "due_date",
+      "operator": "on_or_before_today"
+    },
+    "due_next_7_days": {
+      "enabled": false,
+      "property_key": "due_date",
+      "operator": "within_next_days",
+      "days": 7
+    }
+  },
+  "sort_options": {
+    "project_name": {
+      "enabled": true,
+      "property_key": "project",
+      "direction": "ascending",
+      "local_only": true
+    },
+    "due_date_asc": {
+      "enabled": true,
+      "property_key": "due_date",
+      "direction": "ascending"
+    },
+    "task_name_asc": {
+      "enabled": true,
+      "property_key": "title",
+      "direction": "ascending"
+    },
+    "priority_desc": {
+      "enabled": false,
+      "property_key": "priority",
+      "direction": "descending"
+    }
+  },
+  "display_columns": ["title", "due_date"]
+}

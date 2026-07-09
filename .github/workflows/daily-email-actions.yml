@@ -2,7 +2,7 @@ name: Daily Notion Task Email
 
 on:
   schedule:
-    # 6:30 AM Central time, weekdays. Change the day field to * if you want weekends too.
+    # 6:30 AM Central time, weekdays
     - cron: "30 6 * * 1-5"
       timezone: "America/Chicago"
   workflow_dispatch:
@@ -33,7 +33,6 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_TASKS_DATABASE_ID: ${{ secrets.NOTION_TASKS_DATABASE_ID }}
 
-          # Email. For Gmail SMTP, SMTP_PASSWORD should be an app password for ian.hartsook@gmail.com.
           EMAIL_FROM: ian.hartsook@gmail.com
           EMAIL_TO: ihartsook@huttonbuilds.com
           SMTP_HOST: smtp.gmail.com
